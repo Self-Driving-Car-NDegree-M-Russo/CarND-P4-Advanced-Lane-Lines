@@ -64,7 +64,7 @@ Distorted Image             |  Undistorted Image
 
 ### 3. Gradient/Color Threshold Analysis
 
-After undistorting the test images, they can be converted in a different color space in order to identify what channel would be the best to apply threshold for the lanes identification. Moreover, a threshold can be applied on the gradients of the image (in the x or y direction) to help identify lines/segments. This steps are documented in section 3 of the project [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). 
+After undistorting the test images, they can be converted in a different color space in order to identify what channel would be the best to apply threshold for the lanes identification. Moreover, a threshold can be applied on the gradients of the image (in the x or y direction) to help identify lines/segments. These steps are documented in section 3 of the project [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). 
 
 The working assumptions followed in the analysis are:
 
