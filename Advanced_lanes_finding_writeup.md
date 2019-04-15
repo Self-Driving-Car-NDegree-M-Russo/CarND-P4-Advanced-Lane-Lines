@@ -3,7 +3,7 @@
 
 The goal of this project is to write a software pipeline to identify the lanes in a set of images and a video feed, taken from a camera mounted in a fixed position in front of a moving car. The area between the lanes is then shown on the original image/video stream, together with information about the radius of curvature of the lane (averaged between left and right) and the relative position of the car with respect the center of the lane.
 
-In terms of general steps that the SW will take on the images we can identify::
+In terms of general steps that the SW will take on the images we can identify:
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
@@ -26,7 +26,9 @@ In the following of this writeup, a section will be dedicated to each steps, cla
 [image6]: ./results/processed_imgs/test3_und_bin.jpg "Binary Test Image"
 [image7]: ./results/processed_imgs/straight_lines1_und.jpg "Undistorted Test Image"
 [image8]: ./results/processed_imgs/straight_lines1_und_bin.jpg "Binary Test Image"
-[image9]: ./results/processed_imgs/straight_lines1_und_bin_warp.jpg "Warped Test Image"
+[image9]: ./results/processed_imgs/straight_lines1_und_bin_warp.jpg "Warped Binary Test Image"
+[image10]: ./results/processed_imgs/test1_und_bin_warp.jpg "Warped Binary Test Image"
+[image11]: ./results/processed_imgs/test1_und_bin_warp_lanes.jpg "Decorated Warped Binary Test Image"
 
 [video1]: ./project_video.mp4 "Video"
 
@@ -98,6 +100,29 @@ Test Image             |  Warped Binary Image
 :-------------------------:|:-------------------------:
 ![alt text][image7] |  ![alt text][image9]
 
+
+### 5. Detect Lanes
+
+In order to detect the lanes on the warped binary images, a "Sliding Windows" approach is used: the image is "sliced" in horizontal layers (from bottom to top) and windows of established width are defined in each layer. Pixels from every window are aggregated together and a best fit of their final distribution is calculated using a second order polynomial.
+
+The main steps can be summarized as:
+
+1. Take a histogram of the bottom part of the image (for this project, the bottom third);
+2. Find the peak of the left and right halves of the histogram: these will be the starting point for the left and right lanes, and they will identify the position of two windows blonging to the first layer;
+3. Aggregate the nonzero pixels contained in the two windows;
+4. Move to the layer above and evaluate the nonzero pixels in the windows immediately above the previous ones. Aggregate them with the ones coming from the previous layer, and then compare the number of pixels in the windows with a threshold. If the threshold is crossed, shift the position of the next windows (to be used by the subsequent layer) on the new mean;
+5. Keep moving upwards layer after layer;
+6. Once the whole inage has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated
+
+The code detailing the process is part of section 5 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). For every test image a "decorated" warped binary, showing the sliding windows, the aggregated pixels for the left and right lane, and the best fitting polynomials has been saved in the [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder. An example of the input/output of the process is visible here below:
+
+Warped Binary Image             |  'Decorated" Warped Binary Image
+:-------------------------:|:-------------------------:
+![alt text][image10] |  ![alt text][image11]
+
+
+
+3. 
 
 
 ### Pipeline (single images)
