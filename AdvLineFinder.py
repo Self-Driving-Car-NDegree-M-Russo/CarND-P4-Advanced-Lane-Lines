@@ -423,7 +423,7 @@ def process_frame(img, Left_Coeffs, Right_Coeffs, Left_Coeffs_cr, Right_Coeffs_c
         Smooth_num - Number of frames considered to smooth the lanes. This will also be the length of the previous lists
         max_dist_m - maximum distance in meters to be used as a threshold to evaluate the lanes
     Outputs:
-        result - an image with the lanes plot on it, showing also an indication of ther radius of curvature and the
+        result - an image with the lanes plotted on it, showing also an indication of their radius of curvature and the
             offset of the car with respect to the center of the lane
 
     """
