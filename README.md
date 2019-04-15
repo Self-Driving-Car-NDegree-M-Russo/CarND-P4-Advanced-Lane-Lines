@@ -12,7 +12,7 @@ In terms of general steps that the SW pipeline takes on the images we can identi
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
-* Use color transforms, gradients, etc., to create a thresholded binary image.
+* Use color transforms and gradients analysis, to create a thresholded binary image.
 * Apply a perspective transform to rectify binary image ("birds-eye view").
 * Detect lane pixels and fit to find the lane boundary.
 * Determine the curvature of the lane and vehicle position with respect to center.
@@ -24,3 +24,7 @@ To complete the project, few files are are submitted as part of this Git repo:
 1. An annotated writeup describing the fundamental aspects and limitations of the solution implemented.
 2. A [Python Jupyther notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), that is used to analize images .
 3. A [Python script](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py), that is used to analyse the video. The script reuses most of the pipe defined for the images, but allows better methods definition and flow contro.
+
+Dependencies:
+---
+In order to run the code provided you will nee to properly set up your environment. The refence for this is provided through the Udacity Starter Kit available [here](https://github.com/udacity/CarND-Term1-Starter-Kit).
