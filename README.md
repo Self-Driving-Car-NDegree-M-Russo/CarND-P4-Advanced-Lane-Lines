@@ -22,5 +22,5 @@ In terms of general steps that the SW pipeline takes on the images we can identi
 To complete the project, few files are are submitted as part of this Git repo: 
 
 1. An annotated writeup describing the fundamental aspects and limitations of the solution implemented.
-2. A [Python Jupyther notebook], that is used to analize images (https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb).
-3. A [Python script], that is used to analyse the video. The script reuses most of the pipe defined for the images, but allows better methods definition and flow control (https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py)
+2. A [Python Jupyther notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), that is used to analize images .
+3. A [Python script](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py), that is used to analyse the video. The script reuses most of the pipe defined for the images, but allows better methods definition and flow contro.
