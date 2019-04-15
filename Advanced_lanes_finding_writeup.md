@@ -7,7 +7,7 @@ In terms of general steps that the SW will take on the images we can identify::
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
-* Use color transforms, gradients, etc., to create a thresholded binary image.
+* Use color transforms and gradients' analysis to create a thresholded binary image.
 * Apply a perspective transform to rectify binary image ("birds-eye view").
 * Detect lane pixels and fit to find the lane boundary.
 * Determine the curvature of the lane and vehicle position with respect to center.
@@ -22,8 +22,12 @@ In the following of this writeup, a section will be dedicated to each steps, cla
 [image2]: ./results/cal_results/calibration1_und.jpg "Undistorted Chessboard"
 [image3]: ./test_images/test2.jpg "Test Image"
 [image4]: ./results/processed_imgs/test2_und.jpg "Undistorted Test Image"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[image5]: ./results/processed_imgs/test3_und.jpg "Undistorted Test Image"
+[image6]: ./results/processed_imgs/test3_und_bin.jpg "Binary Test Image"
+[image7]: ./results/processed_imgs/straight_lines1_und.jpg "Undistorted Test Image"
+[image8]: ./results/processed_imgs/straight_lines1_und_bin.jpg "Binary Test Image"
+[image9]: ./results/processed_imgs/straight_lines1_und_bin_warp.jpg "Warped Test Image"
+
 [video1]: ./project_video.mp4 "Video"
 
 
@@ -46,6 +50,7 @@ Distorted Chessboard             |  Undistorted Chessboard
 :-------------------------:|:-------------------------:
 ![alt text][image1] |  ![alt text][image2]
 
+
 ### 2. Distortion Correction for Reference Images
 
 The code for this step is contained in the cell 2 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), and simply consists of the application of the coefficients calculated in the first step to the [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/test_images) provided with the project. The corrected images are saved in a specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder.
@@ -57,7 +62,41 @@ Distorted Image             |  Undistorted Image
 ![alt text][image3] |  ![alt text][image4]
 
 
+### 3. Gradient/Color Threshold Analysis
 
+After undistorting the test images, they can be converted in a different color space in order to identify what channel would be the best to apply threshold for the lanes identification. Moreover, a threshold can be applied on the gradients of the image (in the x or y direction) to help identify lines/segments. This steps are documented in section 3 of the project [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). 
+
+The working assumptions followed in the analysis are:
+
+* Gradient calculated on the x direction only - this mostly because of the near vertical nature of the lanes;
+* Use of the HLS color space, focusing on the S channel. In experimenting. this seemed to provide the better overall performances.
+
+The gradients are expressed by Sobel operator, calculated using the `cv2.Sobel()` function (details [here](https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_gradients/py_gradients.html)); the change in color space is executed through the `cv2.cvtColor()` function (documentation [here](https://docs.opencv.org/2.4.13.7/modules/imgproc/doc/miscellaneous_transformations.html)). 
+Some trial-and-error was required in order to assess the values for the right thresholds. Final choices are visible in the code: an example of the outcome achievable with the final selection is visible here below:
+
+Undistorted Image             |  Binary Image
+:-------------------------:|:-------------------------:
+![alt text][image5] |  ![alt text][image6]
+
+All the binary images are saved in the specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder.
+
+### 4. Perspective Transform
+
+The binary images just obtained can the be transformed to be looked at from a "bird's eye" perspective. 
+
+This is documented in section 4 of the project [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb); specific steps are:
+
+1. Definition of a "mask" on the images, identifying a reference area on which operate the transformation;
+2. Definition of a "destination mask", describing the shape that the reference area should present in the warped perspective;
+3. Application of the `cv2.getPerspectiveTransform()` function to obtain transformation matrixes (direct and inverse) between the two shapes (documentation on the function can be found [here](https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html);
+3. "Warping" of the binary images obtained at the previous step by applying the `cv2.warpPerspective()` function.  
+
+Here too, few attempots were necessary to assess a mask (and subsequent transformation) that would provide reasonably acceptable results across the reference images: the final choice is shown in the Notebook. 
+The transformed images are saved in the usual [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder, while the transformation matrixes are samed as a dictionary in a pickle file for eventual further reuse. An example of the process is visible here below, where we show the original image and the final binary warped perspective:
+
+Test Image             |  Warped Binary Image
+:-------------------------:|:-------------------------:
+![alt text][image7] |  ![alt text][image9]
 
 
 
