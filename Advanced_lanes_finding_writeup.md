@@ -126,7 +126,7 @@ Warped Binary Image             |  'Decorated" Warped Binary Image
 
 ### 6. Calculation of Lanes Curvature and Vehicle Position
 
-The radius of curvature is calculated from the formula `sqrt(1+f'(x)^3/2)/f"(x)`, where f' and f" are the first and second derivative of the equation for the curve (in this case the second order polynomial for which the coefficients have been previously calculated).
+The radius of curvature is calculated from the formula `((1+f'(x)^2)^3/2)/f"(x)`, where f' and f" are the first and second derivative of the equation for the curve (in this case the second order polynomial for which the coefficients have been previously calculated).
 Note that, even if we calculate the radius of curvature for both left and right lanes, on the final processed image only the average will be shown.
 
 The offset from the center of the lane is calculated assuming the car is located at the center of the warped image. 
