@@ -1,12 +1,9 @@
-## Writeup Template
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+## Advanced Lane Finding Project
 
----
+The goal of this project is to write a software pipeline to identify the lanes in a set of images and a video feed, taken from a camera mounted in a fixed position in front of a moving car. The area between the lanes is then shown on the original image/video stream, together with information about the radius of curvature of the lane (averaged between left and right) and the relative position of the car with respect the center of the lane.
 
-**Advanced Lane Finding Project**
-
-The goals / steps of this project are the following:
+In terms of general steps that the SW will take on the images we can identify::
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
@@ -17,39 +14,52 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
+In the following of this writeup, a section will be dedicated to each steps, clarifying the solution implemented and showing examples of the reults. All the steps will make reference to the code in the Python [Jupyter Notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb) accompanying this project: this is used to process individual images. The final section of the writep will give more details on the analysis of the video, that is executed through a dedicated [Python script](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py).
+
 [//]: # (Image References)
 
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
+[image1]: ./camera_cal/calibration1.jpg "Distorted Chessboard"
+[image2]: ./results/cal_results/calibration1_und.jpg "Undistorted Chessboard"
+[image3]: ./test_images/test2.jpg "Test Image"
+[image4]: ./results/processed_imgs/test2_und.jpg "Undistorted Test Image"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
 
-## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
-
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
+## Image Analysis
 
-### Writeup / README
+### 1. Camera Calibration
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
+The code for this step is contained in the cell 1/2 of the aforementioned [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). Documentation for the OpenCV functions that will be referenced here below can be found [here](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html).
 
-You're reading it!
+In order to calibrate the camera some [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/camera_cal) of a chessboard are used. The first step is to obtain "object points", which will be the (x, y, z) coordinates of the reference chessboard corners (NOTE: here we assume a 2D image, hence z will be = 0).
+"Image points" will then be collected from the images in the list through the `cv2.findChessboardCorners()` function. 
 
-### Camera Calibration
+Once vectors for Image/Object points are built, the calibration coefficients can be calculated through the `cv2.calibrateCamera()` function. The coefficients are then used to correct the images using the `cv2.undistort()` function.
+All the calibrated images (together with intermediate steps) are saved in the specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/cal_results) folder. The calibration coefficients are also saved as a dictionary in a pickle file for further use.
 
-#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+An example of the effects of the calibration can be seen here below, where we can see the "before" and "after" for one of the chessboard images:
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+Distorted Chessboard             |  Undistorted Chessboard
+:-------------------------:|:-------------------------:
+![alt text][image1] |  ![alt text][image2]
 
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
+### 2. Distortion Correction for Reference Images
 
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+The code for this step is contained in the cell 2 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), and simply consists of the application of the coefficients calculated in the first step to the [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/test_images) provided with the project. The corrected images are saved in a specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder.
 
-![alt text][image1]
+An example of the results is here below:
+
+Distorted Image             |  Undistorted Image
+:-------------------------:|:-------------------------:
+![alt text][image3] |  ![alt text][image4]
+
+
+
+
+
 
 ### Pipeline (single images)
 
