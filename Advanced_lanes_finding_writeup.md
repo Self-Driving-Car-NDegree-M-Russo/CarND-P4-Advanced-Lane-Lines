@@ -38,7 +38,7 @@ In the following of this writeup, a section will be dedicated to each steps, cla
 
 ### 1. Camera Calibration
 
-The code for this step is contained in the cell 1/2 of the aforementioned [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). Documentation for the OpenCV functions that will be referenced here below can be found [here](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html).
+The code for this step is contained in the sections 1/2 of the aforementioned [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). Documentation for the OpenCV functions that will be referenced here below can be found [here](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html).
 
 In order to calibrate the camera some [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/camera_cal) of a chessboard are used. The first step is to obtain "object points", which will be the (x, y, z) coordinates of the reference chessboard corners (NOTE: here we assume a 2D image, hence z will be = 0).
 "Image points" will then be collected from the images in the list through the `cv2.findChessboardCorners()` function. 
@@ -55,7 +55,7 @@ Distorted Chessboard             |  Undistorted Chessboard
 
 ### 2. Distortion Correction for Reference Images
 
-The code for this step is contained in the cell 2 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), and simply consists of the application of the coefficients calculated in the first step to the [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/test_images) provided with the project. The corrected images are saved in a specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder.
+The code for this step is contained in the section 2 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb), and simply consists of the application of the coefficients calculated in the first step to the [reference images](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/test_images) provided with the project. The corrected images are saved in a specific [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder.
 
 An example of the results is here below:
 
@@ -101,7 +101,7 @@ Test Image             |  Warped Binary Image
 ![alt text][image7] |  ![alt text][image9]
 
 
-### 5. Detect Lanes
+### 5. Lanes Detection
 
 In order to detect the lanes on the warped binary images, a "Sliding Windows" approach is used: the image is "sliced" in horizontal layers (from bottom to top) and windows of established width are defined in each layer. Pixels from every window are aggregated together and a best fit of their final distribution is calculated using a second order polynomial.
 
@@ -112,17 +112,29 @@ The main steps can be summarized as:
 3. Aggregate the nonzero pixels contained in the two windows;
 4. Move to the layer above and evaluate the nonzero pixels in the windows immediately above the previous ones. Aggregate them with the ones coming from the previous layer, and then compare the number of pixels in the windows with a threshold. If the threshold is crossed, shift the position of the next windows (to be used by the subsequent layer) on the new mean;
 5. Keep moving upwards layer after layer;
-6. Once the whole inage has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated
+6. Once the whole inage has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated. 
 
-The code detailing the process is part of section 5 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). For every test image a "decorated" warped binary, showing the sliding windows, the aggregated pixels for the left and right lane, and the best fitting polynomials has been saved in the [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder. An example of the input/output of the process is visible here below:
+Note that after calculating the best-fitting polynomial in terms of pixel coordinates, we will transform that in meter space. This will be necessary in order to calculate quantities that are related to real space, like the radius of curvature of the lanes: these steps will be detailed in the next section.
+In order to convert from pixel space to meter space the appropriate coefficients are calculated starting from the warped images (the one shown in the previous paragraph can be used) and the assumption that the lane is about 30 meters long and 3.7 meters wide. 
+
+The code detailing the process and the parameters used is part of section 5 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). For every test image a "decorated" warped binary, showing the sliding windows, the aggregated pixels for the left and right lane, and the best fitting polynomials has been saved in the [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder. An example of the input/output of the process is visible here below:
 
 Warped Binary Image             |  'Decorated" Warped Binary Image
 :-------------------------:|:-------------------------:
 ![alt text][image10] |  ![alt text][image11]
 
 
+### 6. Calculation of Lanes Curvature and Vehicle Position
 
-3. 
+The radius of curvature is calculated from the formula `sqrt(1+f'(x)^3/2)/f"(x)`, where f' and f" are the first and second derivative of the equation for the curve (in this case the second order polynomial for which the coefficients have been previously calculated).
+Note that, even if we calculate the radius of curvature for both left and right lanes, on the final processed image only the average will be shown.
+
+The offset from the center of the lane is calculated assuming the car is located at the center of the warped image. 
+The position of the center of the lane is calculated as the midpoint between the intersections of the lanes with the bottom of the image: the relative distance to the image midpoint is the desired offset. When the result is > than 0 the vehicle is at the right of the center of the lane.
+
+These steps are contained in section 5.2 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb).
+
+
 
 
 ### Pipeline (single images)
