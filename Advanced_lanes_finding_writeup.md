@@ -91,8 +91,8 @@ This is documented in section 4 of the project [Python notebook](https://github.
 3. Application of the `cv2.getPerspectiveTransform()` function to obtain transformation matrixes (direct and inverse) between the two shapes (documentation on the function can be found [here](https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html);
 3. "Warping" of the binary images obtained at the previous step by applying the `cv2.warpPerspective()` function.  
 
-Here too, few attempots were necessary to assess a mask (and subsequent transformation) that would provide reasonably acceptable results across the reference images: the final choice is shown in the Notebook. 
-The transformed images are saved in the usual [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder, while the transformation matrixes are samed as a dictionary in a pickle file for eventual further reuse. An example of the process is visible here below, where we show the original image and the final binary warped perspective:
+Here too, few attempts were necessary to assess a mask (and subsequent transformation) that would provide reasonably acceptable results across the reference images: the final choice is shown in the Notebook. 
+The transformed images are saved in the usual [results](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/tree/master/results/processed_imgs) folder, while the transformation matrixes are stored as a dictionary in a pickle file for eventual further reuse. An example of the process is visible here below, where we show the original image and the final binary warped perspective:
 
 Test Image             |  Warped Binary Image
 :-------------------------:|:-------------------------:
