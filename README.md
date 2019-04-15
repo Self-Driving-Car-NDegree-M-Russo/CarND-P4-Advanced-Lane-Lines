@@ -27,4 +27,4 @@ To complete the project, few files are are submitted as part of this Git repo:
 
 Dependencies:
 ---
-In order to run the code provided you will nee to properly set up your environment. The refence for this is provided through the Udacity Starter Kit available [here](https://github.com/udacity/CarND-Term1-Starter-Kit).
+In order to run the code provided you will need to properly set up your environment. The refence for this is provided through the Udacity Starter Kit available [here](https://github.com/udacity/CarND-Term1-Starter-Kit).
