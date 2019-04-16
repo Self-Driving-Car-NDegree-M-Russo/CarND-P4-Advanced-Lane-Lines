@@ -14,7 +14,7 @@ In terms of general steps that the SW will take on the images we can identify:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-In the following of this writeup, a section will be dedicated to each steps, clarifying the solution implemented and showing examples of the reults. All the steps will make reference to the code in the Python [Jupyter Notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb) accompanying this project: this is used to process individual images. The final section of the writep will give more details on the analysis of the video, that is executed through a dedicated [Python script](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py).
+In the following of this writeup, a section will be dedicated to each steps, clarifying the solution implemented and showing examples of the reults. All the steps will make reference to the code in the Python [Jupyter Notebook](./advanced_lane_finds.ipynb) accompanying this project: this is used to process individual images. The final section of the writep will give more details on the analysis of the video, that is executed through a dedicated [Python script](./AdvLineFinder.py).
 
 [//]: # (Image References)
 
@@ -115,7 +115,7 @@ The main steps can be summarized as:
 3. Aggregate the nonzero pixels contained in the two windows;
 4. Move to the layer above and evaluate the nonzero pixels in the windows immediately above the previous ones. Aggregate them with the ones coming from the previous layer, and then compare the number of pixels in the windows with a threshold. If the threshold is crossed, shift the position of the next windows (to be used by the subsequent layer) on the new mean;
 5. Keep moving upwards layer after layer;
-6. Once the whole inage has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated. 
+6. Once the whole image has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated. 
 
 Note that after calculating the best-fitting polynomial in terms of pixel coordinates, we will transform that in meter space. This will be necessary in order to calculate quantities that are related to real space, like the radius of curvature of the lanes: these steps will be detailed in the next section.
 In order to convert from pixel space to meter space the appropriate coefficients are calculated starting from the warped images (the one shown in the previous paragraph can be used) and the assumption that the lane is about 30 meters long and 3.7 meters wide. 
@@ -185,8 +185,19 @@ The result of the application of the script to the project video is [here](./res
 
 ---
 
-### Discussion
+## Conclusions and Further Developments
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+As a first design for image recognition, the pipeline developed here seems so produce satisfatory results on the set of images proposed, and it does also seems to behave acceptably on the video. However, the video analysis itself highlights some of the challenging aspects of a solution like this: from it it's possible to see how, for example between 38 and 42 seconds the pipeline fails to properly identify the lanes at times (the envelope is yellow or red), and this is most likely due to the change in the color of the pavement, and in general ambient conditions.
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+The first fundamental problem that such a system must face is indeed how to provide consistent results in a variety of conditions, especially in terms of luminosity and contrast: light, rain, shadows, color of the pavement/lanes etc.
+
+This translated in a challenge in finding the best parameters for Gradient and Color thresholds: what is used, even if a good compromise might not be the optimal solution always. Some different combinations of color spaces and channels, for example, might be used. Some more sophisticated solutions might even change these thresholding mechanisms dynamically, based on other sensors providing info on things like car speed, or wether is day/night, for example.
+The same could be said for things like the mask used for warping the perspective: identifying one took time in this exercise, and still this might not be the best compromise. Here too some dynamic solution (changing the shape of the mask with speed, for example) could be experimented.
+
+Beyond that, another area for improvement is the actual lane identification itself: for this even the Udacity training introduced more than one approach. The sliding Windows here used works, but might not be the best option every time.
+
+Finally, in terms of performances the video analysis could benefit from some improvements: the solution implemented is lower than real time, requiring a couple of minutes to process a 50 seconds video, on an average machine.
+
+The code implemented can definitely be optimized, and there is an influence from steps that are specific to this project (accessing/writing a video on a file system) that would not necessarily apply to a deployment on a vehicle. However, some other things could be further exlored and improved. For example, at the moment no information is exchanged between frames on the position of the lanes, so this process starts from scratch at every frame. This could be improved by forcing the search to start at the position found in the previous frame, and focusing in an area around that. This would also probably improve the resilience of the algorithm, limiting the tendency to get "lost" at times.
+
+As an even more stretched experiment to optimize performaces, it would be interesting to evaluate the behaviour of a C++ implementation of the same pipeline. Most of the code, in fact, relies on the OpenCV library, that is available for C++ also. 
