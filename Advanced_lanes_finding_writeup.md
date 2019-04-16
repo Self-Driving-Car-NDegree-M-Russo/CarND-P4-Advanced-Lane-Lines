@@ -33,8 +33,6 @@ In this writeup a section will be dedicated to each steps, clarifying the soluti
 [image13]: ./results/processed_imgs/test1_und_lanes.jpg "Undistorted Test Image with Lanes"
 
 
-[video1]: ./results/video/processed_project_video.mp4 "Video"
-
 
 ---
 ## Image Analysis
@@ -129,7 +127,7 @@ Warped Binary Image             |  'Decorated" Warped Binary Image
 
 ### 6. Calculation of Lanes Curvature and Vehicle Position
 
-The radius of curvature is calculated from the formula `((1+f'(x)^2)^3/2)/f"(x)`, where f' and f" are the first and second derivative of the equation for the curve (in this case the second order polynomial for which the coefficients have been previously calculated).
+The radius of curvature is calculated from the formula `((1+f'(x)^2)^3/2)/f"(x)`, where f' and f" are the first and second derivative of the equation for the curve (in this case the second order polynomial for which the coefficients have been previously calculated). More details on this formula [here](https://www.intmath.com/applications-differentiation/8-radius-curvature.php).
 Note that, even if we calculate the radius of curvature for both left and right lanes, on the final processed image only the average will be shown.
 
 The offset from the center of the lane is calculated assuming the car is located at the center of the warped image. 
@@ -191,7 +189,7 @@ As a first design for image recognition, the pipeline developed here seems so pr
 
 The first fundamental problem that such a system must face is indeed how to provide consistent results in a variety of conditions, especially in terms of luminosity and contrast: light, rain, shadows, color of the pavement/lanes etc.
 
-This translated in a challenge in finding the best parameters for Gradient and Color thresholds: what is used, even if a good compromise, might not be the optimal solution always. Some different combinations of color spaces and channels, for example, might be used. Some more sophisticated solutions might even change these thresholding mechanisms dynamically, based on other sensors providing info on things like car speed, or wether is day/night.
+This translated in a challenge in finding the best parameters for Gradient and Color thresholds: what is used, even if a good compromise, might not be the optimal solution always. Some different combinations of color spaces and channels, for example, might be used. Some more sophisticated solutions might even change these thresholding mechanisms dynamically, based on other sensors providing info on things like car speed, or whether is day/night.
 The same could be said for things like the mask used for warping the perspective: identifying one took time in this exercise, and still this might not be the best compromise. Here too some dynamic solution (changing the shape of the mask with speed, for example) could be experimented.
 
 Beyond that, another area for improvement is the actual lanes' identification itself: for this even the Udacity training introduced more than one approach. The Sliding Windows here used works, but might not be the best option every time.
