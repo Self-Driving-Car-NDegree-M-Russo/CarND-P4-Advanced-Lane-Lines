@@ -2,10 +2,7 @@
 
 import numpy as np
 import cv2
-import glob
-import matplotlib.pyplot as plt
 import pickle
-import os
 
 
 ## Methods
@@ -82,7 +79,6 @@ def find_lanes(binary_warped, nwindows, margin, minpix, xm_per_pix, ym_per_pix):
 
     # 2. Take a histogram of the bottom third of the image
     histogram = np.sum(binary_warped[2 * binary_warped.shape[0] // 3:, :], axis=0)
-    # plt.plot(histogram)
 
     # 3. Find the peak of the left and right halves of the histogram
     # These will be the starting point for the left and right lines
