@@ -140,12 +140,12 @@ These steps are contained in section 5.2 of the [Python notebook](./advanced_lan
 
 ### 7. Revert Back and Information Display
 
-The picture of the warped lanes obtained so far gets reverted back to the original perspective by using the Minv matrix calculated at Point 4. 
+The picture of the warped lanes obtained so far gets reverted back to the original perspective by using the inverse transformation matrix calculated at Point 4. 
 
 All the necessary steps are included in the final sections of the project [Python notebook](./advanced_lane_finds.ipynb). 
 First, a "blank" image is drawn containing only the lanes and the envelope between them. Then, this blank image is reverted back to the original perspective using again the `cv2.warpPerspective()` function. Finally, this envelope is overlapped on the original image, and some text is dispalyed with the information on curvature and offset calculated as described in the previous Point 6.
 
-An example for on of the test image is here below:
+An example for one of the test image is here below:
 
 Undistorted Test Image             |  "Annotated" Test Image
 :-------------------------:|:-------------------------:
@@ -158,7 +158,7 @@ The process is finally applied on the test images, and the processed outputs are
 
 ## Video Analysis
 
-In order to analyze a video feed, the whole pipeline described so far can be reused. However, rather than working with a Jupyter Notebook, a specific [Python script](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/AdvLineFinder.py) is provided with this project.
+In order to analyze a video feed, the whole pipeline described so far can be reused. However, rather than working with a Jupyter Notebook, a specific [Python script](./AdvLineFinder.py) is provided with this project.
 
 The reasons to move to the script are basically:
 
@@ -168,18 +168,18 @@ The reasons to move to the script are basically:
 
 ### Frame Smoothing
 
-On top of the steps defined to analyze images, for the video feed some consideration is needed in order to ensure a smooth transition between frames. To this end, two main features have been added:
+On top of the steps defined to analyze images, for the video feed some considerations are needed in order to ensure a smooth transition between frames. To this end, two main features have been added:
 
-1. The coefficients for the second-order polynomials defining the lanes are smoothed across frames. In order to obtain this, for each frame a list of the coefficients for the `n-1` previous frames is considered, and the lanes that are plotted are the ones obtained by **averaging** the coefficients of the list. After some experiment, given the fps (frame per second) value for the input video (25) a list of 10 frames is considered in the code. Of course, this parameter is adjustable.
+1. The coefficients for the second-order polynomials defining the lanes are smoothed across frames. In order to obtain this, for each frame a list of the coefficients for the `n` previous frames (including the current one) is considered, and the lanes that are plotted are the ones obtained by **averaging** the coefficients of the list. After some experiment, given the fps (frame per second) value for the input video (25) a list of 10 frames is considered in the code. Of course, this parameter is adjustable.
 
-2. In some challenging frame (for example in case of sudden changes in luminosity or contrast) the pipe might actually fail in properly identify the lane, and return incorrect coefficients for the polynomials. These cases are identified by evaluating the intersection of the polynomial calculated for each frame with the top and bottom and image. These points are compared with the intersection of the _averaged_ polynomial coming from the `n` previous frames, again with the top/bottom of the image. At that point:
+2. In some challenging frame (for example in case of sudden changes in luminosity or contrast) the pipeline might actually fail in properly identifying the lanes, and return incorrect coefficients for the polynomials. These cases are identified by evaluating the intersection of the polynomials calculated for each frame with the top and bottom and image. These points are then compared with the intersection of the _averaged_ polynomial coming from the `n` previous frames, again with the top/bottom of the image. At that point:
 * If the minimum distances between the intersections is higher than a given threshold, the frame-specific lanes are deemed to be wrong and discarded: for this frame the code will hold the lanes of the previous one; 
 * If the maximum distance between intersection is below the threshold, the frame-specific lanes are considerd good, and the list of coefficients is updated;
-* If only one side (right/left) has distances below the given threshold, coefficients for that side are updated accordingly.
+* If only one side (right/left) has distances below the given threshold, coefficients for that side only are updated accordingly.
 
 The steps above are contained in the `smooth_lanes()` function, defined at line 164 of the script.
 
-In order to provide som graphical clue of the behaviour of the pipeline, the envelope is plotted in Green when the lanes are correctly identified, Red when they are discarded for the current frame, and Yellow when only on lane has been updated.
+In order to provide some graphical clue of the behaviour of the pipeline, the envelope is plotted in Green when the lanes are correctly identified, Red when they are discarded for the current frame, and Yellow when only on lane has been updated.
 
 The result of the application of the script to the project video is [here](./results/video).
 
