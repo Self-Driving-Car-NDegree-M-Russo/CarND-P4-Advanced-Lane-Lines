@@ -1,9 +1,9 @@
 
 ## Advanced Lane Finding Project
 
-The goal of this project is to write a software pipeline to identify the lanes in a set of images and a video feed, taken from a camera mounted in a fixed position in front of a moving car. The area between the lanes is then shown on the original image/video stream, together with information about the radius of curvature of the lane (averaged between left and right) and the relative position of the car with respect the center of the lane.
+The goal of this project is to write a software pipeline to identify the lanes in a set of images and a video feed, taken from a camera mounted in a fixed position in front of a moving car. The area between the lanes is then shown on the original image/video stream, together with information about the radius of curvature of the lane (averaged between left and right) and the relative position of the car with respect to the center of the lane.
 
-In terms of general steps that the SW will take on the images we can identify:
+In terms of general steps that the SW will take on the images we have:
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
@@ -14,7 +14,7 @@ In terms of general steps that the SW will take on the images we can identify:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-In the following of this writeup, a section will be dedicated to each steps, clarifying the solution implemented and showing examples of the reults. All the steps will make reference to the code in the Python [Jupyter Notebook](./advanced_lane_finds.ipynb) accompanying this project: this is used to process individual images. The final section of the writep will give more details on the analysis of the video, that is executed through a dedicated [Python script](./AdvLineFinder.py).
+In this writeup a section will be dedicated to each steps, clarifying the solution implemented and showing examples of the reults. All the steps will make reference to the code in the Python [Jupyter Notebook](./advanced_lane_finds.ipynb) accompanying this project: this is used to process individual images. The final section of the writep will give more details on the analysis of the video, that is executed through a dedicated [Python script](./AdvLineFinder.py).
 
 [//]: # (Image References)
 
@@ -69,7 +69,7 @@ Distorted Image             |  Undistorted Image
 
 ### 3. Gradient/Color Threshold Analysis
 
-After undistorting the test images, they can be converted in a different color space in order to identify what channel would be the best to apply a threshold for the lanes identification. Moreover, thresholds can be applied on the gradients of the image (in the x or y direction) to help identify lines/segments. These steps are documented in section 3 of the project [Python notebook](./advanced_lane_finds.ipynb). 
+After undistorting the test images, they can be converted in a different color space in order to identify what channel would be the best to apply a threshold for the identification of the lanes. Moreover, thresholds can be applied on the gradients of the image (in the x or y direction) to help identify lines/segments. These steps are documented in section 3 of the project [Python notebook](./advanced_lane_finds.ipynb). 
 
 The working assumptions followed in the analysis are:
 
@@ -111,13 +111,13 @@ In order to detect the lanes on the warped binary images, a "Sliding Windows" ap
 The main steps can be summarized as:
 
 1. Take a histogram of the bottom part of the image (for this project, the bottom third);
-2. Find the peak of the left and right halves of the histogram: these will be the starting point for the left and right lanes, and they will identify the position of two windows blonging to the first layer;
+2. Find the peak of the left and right halves of the histogram: these will be the starting point for the left and right lanes, and they will identify the position of two windows belonging to the first layer;
 3. Aggregate the nonzero pixels contained in the two windows;
 4. Move to the layer above and evaluate the nonzero pixels in the windows immediately above the previous ones. Aggregate them with the ones coming from the previous layer, and then compare the number of pixels in the windows with a threshold. If the threshold is crossed, shift the position of the next windows (to be used by the subsequent layer) on the new mean;
 5. Keep moving upwards layer after layer;
 6. Once the whole image has been evaluated, two vectors of pixels (from the left and right sequence of windows) will have been defined. For each of them a best-fitting second order polynomial is calculated. 
 
-Note that after calculating the best-fitting polynomial in terms of pixel coordinates, we will transform that in meter space. This will be necessary in order to calculate quantities that are related to real space, like the radius of curvature of the lanes: these steps will be detailed in the next section.
+Note that after calculating the best-fitting polynomial in terms of pixel coordinates, we will transform that in meter space. This will be necessary in order to calculate quantities that are related to real space, like the radius of curvature of the lanes (in m): these steps will be detailed in the next section.
 In order to convert from pixel space to meter space the appropriate coefficients are calculated starting from the warped images (the one shown in the previous paragraph can be used) and the assumption that the lane is about 30 meters long and 3.7 meters wide. 
 
 The code detailing the process and the parameters used is part of section 5 of the [Python notebook](https://github.com/russom/CarND-Advanced-Lane-Lines-RussoM/blob/master/advanced_lane_finds.ipynb). For every test image a "decorated" warped binary, showing the sliding windows, the aggregated pixels for the left and right lane, and the best fitting polynomials has been saved in the [results](./results/processed_imgs) folder. An example of the input/output of the process is visible here below:
